@@ -19,6 +19,7 @@ package io.pivotal.literx;
 import io.pivotal.literx.domain.User;
 import io.pivotal.literx.repository.ReactiveRepository;
 import io.pivotal.literx.repository.ReactiveUserRepository;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -47,24 +48,24 @@ public class Part09Adapt {
 
     // TODO Adapt Flux to RxJava Flowable
     Flowable<User> fromFluxToFlowable(Flux<User> flux) {
-        return Flowable.fromIterable(flux.toIterable());
+        return Flowable.fromPublisher(flux);
     }
 
     // TODO Adapt RxJava Flowable to Flux
     Flux<User> fromFlowableToFlux(Flowable<User> flowable) {
-        return Flux.fromIterable(flowable.blockingIterable());
+        return Flux.from(flowable);
     }
 
 //========================================================================================
 
     // TODO Adapt Flux to RxJava Observable
     Observable<User> fromFluxToObservable(Flux<User> flux) {
-        return Observable.fromIterable(flux.toIterable());
+        return Observable.fromPublisher(flux);
     }
 
     // TODO Adapt RxJava Observable to Flux
     Flux<User> fromObservableToFlux(Observable<User> observable) {
-        return Flux.fromIterable(observable.blockingIterable());
+        return Flux.from(observable.toFlowable(BackpressureStrategy.BUFFER));
     }
 
 //========================================================================================

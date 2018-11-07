@@ -20,6 +20,7 @@ import io.pivotal.literx.domain.User;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
+import java.time.Duration;
 import java.util.function.Supplier;
 
 /**
@@ -45,8 +46,7 @@ public class Part03StepVerifier {
     void expectFooBarError(Flux<String> flux) {
         StepVerifier.create(flux)
                 .expectNext("foo", "bar")
-                .expectError()
-                .verify();
+                .verifyError(RuntimeException.class);
     }
 
 //========================================================================================
@@ -76,6 +76,7 @@ public class Part03StepVerifier {
     // by manipulating virtual time thanks to StepVerifier#withVirtualTime, notice how long the test takes
     void expect3600Elements(Supplier<Flux<Long>> supplier) {
         StepVerifier.withVirtualTime(supplier)
+                .thenAwait(Duration.ofHours(1))
                 .expectNextCount(3600)
                 .verifyComplete();
 

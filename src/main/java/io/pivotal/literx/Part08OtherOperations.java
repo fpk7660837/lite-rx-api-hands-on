@@ -15,8 +15,11 @@ public class Part08OtherOperations {
 
     // TODO Create a Flux of user from Flux of username, firstname and lastname.
     Flux<User> userFluxFromStringFlux(Flux<String> usernameFlux, Flux<String> firstnameFlux, Flux<String> lastnameFlux) {
-        return usernameFlux.zipWith(firstnameFlux, (s, s2) -> new User(s, s2, null))
-                .zipWith(lastnameFlux, (user, s) -> new User(user.getUsername(), user.getFirstname(), s));
+        // return usernameFlux.zipWith(firstnameFlux, (s, s2) -> new User(s, s2, null))
+        //         .zipWith(lastnameFlux, (user, s) -> new User(user.getUsername(), user.getFirstname(), s));
+
+        return Flux.zip(usernameFlux, firstnameFlux, lastnameFlux)
+                .map(tuple -> new User(tuple.getT1(), tuple.getT2(), tuple.getT3()));
     }
 
 //========================================================================================
@@ -51,7 +54,7 @@ public class Part08OtherOperations {
 
     // TODO Return the same mono passed as input parameter, expect that it will emit User.SKYLER when empty
     Mono<User> emptyToSkyler(Mono<User> mono) {
-        return mono.switchIfEmpty(Mono.just(User.SKYLER));
+        return mono.defaultIfEmpty(User.SKYLER);
     }
 
 }
